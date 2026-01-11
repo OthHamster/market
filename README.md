@@ -25,4 +25,20 @@ git clone https://github.com/OthHamster/market
 cd 你的仓库名
 ```
 
+### 2. 安装 electron 依赖
+
+```bash
+# 设置 electron 镜像
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+npm install
+```
+
+### 3. 安装后端 express 依赖
+
+```bash
+# 设置 electron 镜像
+cd ./backend
+npm install
+```
+
 ## 🛠️ 开源协议 MIT License
