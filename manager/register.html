@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' http://localhost:*;"
+    />
+    <title>数据库数据录入</title>
+    <style>
+      body {
+        background: #f4f6f9;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      .container {
+        display: inline-block;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        text-align: left;
+        min-width: 600px;
+      }
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 15px; 
+        transition: color 0.2s;
+        cursor: pointer;
+      }
+      .btn-back svg {
+        width: 16px; 
+        height: 16px; 
+        margin-right: 5px; 
+        fill: currentColor; 
+      }
+      
+      .header-row {
+        display: flex;
+        background: #f8f9fa;
+        padding: 10px 0;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 10px;
+      }
+      .header-col {
+       
+        width: 140px;
+        padding-left: 10px;
+        border-right: 1px solid #eee;
+      }
+      .header-col:last-child {
+        border-right: none;
+      }
+
+      
+      .list-ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .list-option {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f1f1;
+      }
+      .list-option:hover {
+        background-color: #fafafa;
+      }
+      .data-input {
+        width: 130px; 
+        padding: 6px 8px;
+        margin-right: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .data-input:focus {
+        border-color: #80bdff;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+
+      
+      .btn-del {
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 13px;
+        margin-left: 10px;
+      }
+      .btn-del:hover {
+        text-decoration: underline;
+      }
+
+      .footer-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 2px solid #eee;
+        padding-top: 20px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .btn-add {
+        background-color: #e2e6ea;
+        color: #212529;
+      }
+      .btn-add:hover {
+        background-color: #dbe2e8;
+      }
+
+      .btn-submit {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 10px 24px;
+      }
+      .btn-submit:hover {
+        background-color: #218838;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a id="link-back" class="btn-back" href="./manager.html">
+        <svg viewBox="0 0 16 16">
+          <path
+            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+          />
+        </svg>
+        返回上一页
+      </a>
+      <div class="header-row" id="header-row"></div>
+
+      <form id="data-form">
+        <ul class="list-ul" id="list-ul"></ul>
+      </form>
+
+      <div class="footer-actions">
+        <button class="btn btn-add" id="btn-add-row">+ 添加一行记录</button>
+        <button class="btn btn-submit" id="btn-submit">提交</button>
+      </div>
+    </div>
+    <script src="./renderer.js"></script>
+    <script>
+      const DB_COLUMNS = ["姓名", "联系方式"];
+      const DB_COLUMNS_NAME = ["name", "ContactInfo"];
+
+      const listUl = document.getElementById("list-ul");
+      const headerRow = document.getElementById("header-row");
+      const btnAddRow = document.getElementById("btn-add-row");
+      const btnSubmit = document.getElementById("btn-submit");
+
+      // 1. 初始化表头
+      function initHeader() {
+        headerRow.innerHTML = "";
+        DB_COLUMNS.forEach((colName) => {
+          const div = document.createElement("div");
+          div.className = "header-col";
+          div.innerText = colName;
+          headerRow.appendChild(div);
+        });
+        const actionHeader = document.createElement("div");
+        actionHeader.className = "header-col";
+        actionHeader.style.border = "none";
+        actionHeader.innerText = "操作";
+        headerRow.appendChild(actionHeader);
+      }
+
+      // 2. 添加一行记录
+      function addRow(data = ["", ""]) {
+        const li = document.createElement("li");
+        li.className = "list-option";
+
+        // 根据列的数量循环创建输入框
+        DB_COLUMNS.forEach((colKey, index) => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "data-input";
+          input.value = data[index] || "";
+          // 存储这个输入框对应的数据库字段名，方便后续提取
+          input.dataset.key = colKey;
+          li.appendChild(input);
+        });
+
+        // 删除按钮
+        const delBtn = document.createElement("span");
+        delBtn.className = "btn-del";
+        delBtn.innerText = "删除";
+        delBtn.onclick = () => {
+          li.remove();
+        };
+
+        li.appendChild(delBtn);
+        listUl.appendChild(li);
+
+        // 自动聚焦第一个输入框
+        setTimeout(() => {
+          const firstInput = li.querySelector("input");
+          if (firstInput) firstInput.focus();
+        }, 0);
+      }
+
+      // 3. 提交并生成 JSON
+      btnSubmit.addEventListener("click", () => {
+        const rows = listUl.querySelectorAll(".list-option");
+        const jsonResult = [];
+
+        rows.forEach((row) => {
+          const inputs = row.querySelectorAll("input");
+          const record = {};
+
+          inputs.forEach((input, index) => {
+            const key = DB_COLUMNS_NAME[index];
+            let value = input.value;
+
+            record[key] = value;
+          });
+
+          jsonResult.push(record);
+        });
+        JSON.stringify(jsonResult, null, 2);
+        send(jsonResult);
+        window.location.replace("./confirm.html");
+      });
+      btnAddRow.addEventListener("click", () => addRow());
+
+      initHeader(); // 生成表头
+      addRow(); // 默认添加一行
+    </script>
+  </body>
+</html>

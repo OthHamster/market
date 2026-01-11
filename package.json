@@ -1,0 +1,39 @@
+{
+  "name": "ele",
+  "version": "1.0.0",
+  "description": "a",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "author": "a",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^26.4.0"
+  },
+  "build": {
+    "appId": "com.otham.market",
+    "productName": "超市管理系统",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "electron-store": "^11.0.2",
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2"
+  }
+}

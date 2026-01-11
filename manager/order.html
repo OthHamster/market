@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' http://localhost:*;"
+    />
+    <title>数据库数据录入</title>
+    <style>
+      body {
+        background: #f4f6f9;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      .container {
+        display: inline-block;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        text-align: left;
+        min-width: 600px;
+        position: relative;
+      }
+
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+        cursor: pointer;
+      }
+      .btn-back:hover {
+        color: #007bff;
+      }
+      .btn-back svg {
+        margin-right: 5px;
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      .header-row {
+        display: flex;
+        background: #f8f9fa;
+        padding: 10px 0;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 10px;
+      }
+      .header-col {
+        width: 140px;
+        padding-left: 10px;
+        border-right: 1px solid #eee;
+      }
+      .header-col:last-child {
+        border-right: none;
+      }
+
+      .list-ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .selectedlist-ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-top: 2px solid #eee;
+      }
+      .list-option {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f1f1;
+      }
+      .list-option:hover {
+        background-color: #fafafa;
+      }
+      .data-input {
+        width: 130px;
+        padding: 6px 8px;
+        margin-right: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .data-input:focus {
+        border-color: #80bdff;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+
+      .btn-button {
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 13px;
+        margin-left: 10px;
+      }
+      .btn-button:hover {
+        text-decoration: underline;
+      }
+
+      .footer-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 2px solid #eee;
+        padding-top: 20px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .btn-add {
+        background-color: #e2e6ea;
+        color: #212529;
+      }
+      .btn-add:hover {
+        background-color: #dbe2e8;
+      }
+
+      .btn-submit {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 10px 24px;
+      }
+      .btn-submit:hover {
+        background-color: #218838;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a id="link-back" class="btn-back" href="./manager.html">
+        <svg viewBox="0 0 16 16">
+          <path
+            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+          />
+        </svg>
+        返回上一页
+      </a>
+
+      <div class="header-row" id="header-row"></div>
+
+      <form id="data-form">
+        <ul class="list-ul" id="list-ul"></ul>
+      </form>
+      <form id="selected-form">
+        <ul class="selectedlist-ul" id="selectedlist-ul"></ul>
+      </form>
+      <div class="footer-actions">
+        <button class="btn btn-submit" id="btn-submit">提交</button>
+      </div>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script>
+      const TARGET_URL = "./cashier.html";
+
+      const DB_COLUMNS = ["商品名", "价格", "描述", "数量"];
+      const DB_COLUMNS_NAME = ["Name", "Price", "Description", "Quantity"];
+
+      const listUl = document.getElementById("list-ul");
+      const selectedListUl = document.getElementById("selectedlist-ul");
+      const headerRow = document.getElementById("header-row");
+      const btnAddRow = document.getElementById("btn-add-row");
+      const btnSubmit = document.getElementById("btn-submit");
+
+      function initHeader() {
+        headerRow.innerHTML = "";
+        DB_COLUMNS.forEach((colName) => {
+          const div = document.createElement("div");
+          div.className = "header-col";
+          div.innerText = colName;
+          headerRow.appendChild(div);
+        });
+        const actionHeader = document.createElement("div");
+        actionHeader.className = "header-col";
+        actionHeader.style.border = "none";
+        actionHeader.innerText = "操作";
+        headerRow.appendChild(actionHeader);
+      }
+
+      function addRow(data = ["", ""]) {
+        const li = document.createElement("li");
+        li.className = "list-option";
+
+        DB_COLUMNS.forEach((colKey, index) => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "data-input";
+          input.value = data[DB_COLUMNS_NAME[index]] || "";
+          if (index != 3) {
+            input.disabled = true;
+          }
+          if (index == 3) {
+            input.value = "现有" + data[DB_COLUMNS_NAME[index]] || "";
+          }
+          input.dataset.key = colKey;
+          li.appendChild(input);
+        });
+
+        const changeBtn = document.createElement("span");
+        changeBtn.className = "btn-button";
+        changeBtn.innerText = "选择";
+        changeBtn.id = data.ProductID;
+        changeBtn.name = data.Quantity;
+        const str = /^\d+$/;
+
+        changeBtn.onclick = async () => {
+          if (changeBtn.innerText == "选择") {
+            if (!str.test(changeBtn.previousElementSibling.value)) {
+              changeBtn.previousElementSibling.value = "输入非法";
+              return;
+            }
+            ID = changeBtn.id;
+            changeBtn.innerText = "取消";
+            selectedListUl.appendChild(li);
+            changeBtn.previousElementSibling.disabled = true;
+          } else {
+            changeBtn.previousElementSibling.disabled = false;
+            listUl.appendChild(li);
+            changeBtn.innerText = "选择";
+          }
+        };
+        li.appendChild(changeBtn);
+        listUl.appendChild(li);
+      }
+
+      btnSubmit.addEventListener("click", async () => {
+        const rows = selectedListUl.querySelectorAll(".list-option");
+        const jsonResult = {};
+        const ProductList = [];
+
+        rows.forEach((row) => {
+          const record = {};
+          const inputs = row.querySelectorAll("input");
+          record["ProductID"] = row.children[4].id;
+          record["Quantity"] = row.children[3].value;
+          ProductList.push(record);
+        });
+        jsonResult["ProductList"] = ProductList;
+        console.log("JSON:", jsonResult);
+        res = await window.API.sender(jsonResult, "order");
+        window.location.replace("./confirm.html");
+      });
+
+      async function createRow() {
+        const dataList = await window.API.sender([], "getProductName");
+        dataList.data.forEach((csm) => {
+          addRow(csm);
+        });
+      }
+
+      function reflesh() {
+        const elements = document.querySelectorAll(".list-option");
+        elements.forEach((el) => {
+          el.remove();
+        });
+        createRow();
+      }
+
+      // 初始化运行
+      initHeader();
+      createRow();
+    </script>
+  </body>
+</html>

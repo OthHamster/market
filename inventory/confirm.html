@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' http://localhost:*;"
+    />
+    <title>数据库数据录入</title>
+    <style>
+      body {
+        background: #f4f6f9;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      .container {
+        display: inline-block;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        text-align: left;
+        min-width: 600px;
+        position: relative; /* 为了布局方便 */
+      }
+
+      /* ==================== */
+      /*   新增：返回按钮样式   */
+      /* ==================== */
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 20px; /* 和表头隔开一点距离 */
+        transition: color 0.2s;
+        cursor: pointer;
+      }
+      .btn-back:hover {
+        color: #007bff;
+      }
+      .btn-back svg {
+        margin-right: 5px;
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      /* 表头样式 */
+      .header-row {
+        display: flex;
+        background: #f8f9fa;
+        padding: 10px 0;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 10px;
+      }
+      .header-col {
+        width: 140px;
+        padding-left: 10px;
+        border-right: 1px solid #eee;
+      }
+      .header-col:last-child {
+        border-right: none;
+      }
+
+      /* 数据行样式 */
+      .list-ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .list-option {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f1f1;
+      }
+      .list-option:hover {
+        background-color: #fafafa;
+      }
+      .data-input {
+        width: 130px;
+        padding: 6px 8px;
+        margin-right: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .data-input:focus {
+        border-color: #80bdff;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+
+      /* 按钮和操作区 */
+      .btn-button {
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 13px;
+        margin-left: 10px;
+      }
+      .btn-button:hover {
+        text-decoration: underline;
+      }
+
+      .footer-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 2px solid #eee;
+        padding-top: 20px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .btn-add {
+        background-color: #e2e6ea;
+        color: #212529;
+      }
+      .btn-add:hover {
+        background-color: #dbe2e8;
+      }
+
+      .btn-submit {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 10px 24px;
+      }
+      .btn-submit:hover {
+        background-color: #218838;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-row" id="header-row">
+      </div>
+
+      <form id="data-form">
+        <ul class="list-ul" id="list-ul">
+          <div id="confirm"></div>
+        </ul>
+      </form>
+
+      <div class="footer-actions">
+        <button class="btn btn-submit" id="btn-submit">返回</button>
+      </div>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script>
+      const listUl = document.getElementById("list-ul");
+      const headerRow = document.getElementById("header-row");
+      const btnAddRow = document.getElementById("btn-add-row");
+      const btnSubmit = document.getElementById("btn-submit");
+      const confirm = document.getElementById("confirm");
+
+      btnSubmit.onclick = () => {
+        window.location.replace("./orderConfirm.html");
+      };
+      async function initHTML() {
+        confirm.innerHTML = "操作成功。";
+      }
+      initHTML();
+    </script>
+  </body>
+</html>
