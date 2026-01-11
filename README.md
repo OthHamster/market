@@ -41,4 +41,28 @@ cd ./backend
 npm install
 ```
 
+### 4. 设置后端服务器端口
+
+将 backend 文件夹里面的 config 文件中的 port 修改至放行端口
+
+### 5. 开启后端服务器
+
+```bash
+node server.js
+```
+
+### 6. 配置前端目标服务器地址
+
+```bash
+npm start
+```
+
+在开启窗口中配置服务器地址，如果是本地可以填写
+
+```端口
+http://localhost:后端服务器端口
+```
+
+默认服务器是我自己搭建的测试服务器，可能不会一直开
+
 ## 🛠️ 开源协议 MIT License
