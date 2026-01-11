@@ -22,7 +22,6 @@
 
 ```bash
 git clone https://github.com/OthHamster/market
-cd 你的仓库名
 ```
 
 ### 2. 安装 electron 依赖
